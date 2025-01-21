@@ -1,5 +1,5 @@
 "use server";
-import { Client, Account } from "node-appwrite";
+import { Client, Account, Locale } from "node-appwrite";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE } from "./const";
 
@@ -14,6 +14,12 @@ export async function createSessionClient() {
   }
 
   client.setSession(session.value);
+
+  const locale = new Locale(client);
+
+  const result = await locale.get();
+
+  console.log("LOCALE => ", result);
 
   return {
     get account() {
