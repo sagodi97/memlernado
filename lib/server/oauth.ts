@@ -10,7 +10,7 @@ export async function signInWithGoogle() {
 
   const origin = headers().get("origin");
   const successUrl = `${origin}/oauth`;
-  const failureUrl = `${origin}/signin`;
+  const failureUrl = `${origin}/auth`;
 
   const redirectUrl = await account.createOAuth2Token(
     OAuthProvider.Google,
