@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 import { signOut } from "@/actions";
 import { LogOut } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface IUserAvatarProps {
   fallbackText: string;
@@ -58,11 +59,19 @@ export const UserMenuButton = async () => {
           </div>
           <Separator />
           <DropdownMenuItem
-            onClick={signOut}
+            asChild
             className="text-rose-700 font-medium cursor-pointer"
           >
-            <LogOut />
-            Sign Out
+            <form action={signOut}>
+              <Button
+                variant={"ghost"}
+                type="submit"
+                className="hover:text-rose-700 text-rose-700"
+              >
+                <LogOut />
+                Sign Out
+              </Button>
+            </form>
           </DropdownMenuItem>
         </div>
       </DropdownMenuContent>
