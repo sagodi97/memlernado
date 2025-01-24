@@ -1,34 +1,42 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import {
+  ChartAreaIcon,
+  InboxIcon,
+  LogsIcon,
+  SquareKanbanIcon,
+} from "lucide-react";
 
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/backlog", label: "Backlog" },
-  { href: "/board", label: "Board" },
-  { href: "/reports", label: "Reports" },
-]
+  { href: "/team", label: "Your Work", icon: InboxIcon },
+  { href: "/backlog", label: "Backlog", icon: LogsIcon },
+  { href: "/board", label: "Board", icon: SquareKanbanIcon },
+  { href: "/reports", label: "Reports", icon: ChartAreaIcon },
+];
 
 export function Navigation() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
-    <nav className="flex space-x-4 mb-4">
-      {links.map((link) => (
+    <nav className="flex flex-col gap-4">
+      {links.map(({ href, label, icon: Icon }) => (
         <Link
-          key={link.href}
-          href={link.href}
+          key={href}
+          href={href}
           className={cn(
-            "text-sm font-medium transition-colors hover:text-primary",
-            pathname === link.href ? "text-primary" : "text-muted-foreground",
+            "flex gap-2 items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:text-primary",
+            pathname === href
+              ? "text-primary bg-white"
+              : "text-muted-foreground"
           )}
         >
-          {link.label}
+          <Icon size={18} />
+          {label}
         </Link>
       ))}
     </nav>
-  )
+  );
 }
-
