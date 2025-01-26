@@ -6,10 +6,9 @@ import { TabsContent } from "@/components/ui/tabs";
 export default async function TeamSettingsPage() {
   const teams = await getUserTeams();
   const teamId = teams?.teams?.[0].$id;
-  if (!teamId) throw new Error("User does not belong to any workspace");
+  if (!teamId) return null;
   const memberships = await getTeamMembers(teamId);
-  if (!memberships)
-    throw new Error("User does not have any role in thr current workspace");
+  if (!memberships) return null;
 
   return (
     <div>
