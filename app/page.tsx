@@ -8,7 +8,6 @@ export default async function Home() {
   const user = await getLoggedInUser();
   if (!user) redirect("/landing");
   const userTeams = await getUserTeams();
-  console.log(userTeams);
-  if (!userTeams.total) redirect("/onboarding");
-  redirect("/team");
+  if (!userTeams?.total) redirect("/onboarding");
+  redirect("/workspace");
 }

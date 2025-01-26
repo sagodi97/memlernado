@@ -1,6 +1,6 @@
 import { MobileSideBar, Sidebar } from "@/components/sidebar";
 import { UserMenuButton } from "@/components/user-menu-button";
-import { getLoggedInUser } from "@/lib/server/appwrite";
+import { getLoggedInUser, getUserTeams } from "@/lib/server/appwrite";
 
 import { redirect } from "next/navigation";
 
@@ -10,7 +10,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const user = await getLoggedInUser();
-  if (!user) redirect("/auth");
+  if (!user) redirect("/landing");
+  const userTeams = await getUserTeams();
+  if (!userTeams?.total) redirect("/onboarding");
 
   return (
     <div className="flex gap-3 min-h-screen">

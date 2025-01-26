@@ -1,6 +1,6 @@
 "use client";
 
-import { Client, Databases, Account } from "appwrite";
+import { Client, Databases, Account, Teams } from "appwrite";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { useEffect, useState } from "react";
 
@@ -27,6 +27,9 @@ function createWebSessionClient(session: RequestCookie) {
     get databases() {
       return new Databases(client);
     },
+    get teams() {
+      return new Teams(client);
+    },
     get client() {
       return client;
     },
@@ -37,6 +40,7 @@ type TAppWriteWebClient = {
   account: Account;
   databases: Databases;
   client: Client;
+  teams: Teams;
 };
 
 export function useAppwriteClient(session: RequestCookie) {

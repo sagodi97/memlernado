@@ -12,13 +12,6 @@ export async function signUpWithEmail(
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const name = formData.get("name") as string;
-
-  console.log({
-    email,
-    password,
-    name,
-  });
-
   const { account } = await createAdminClient();
 
   try {
