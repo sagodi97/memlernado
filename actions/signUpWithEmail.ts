@@ -32,7 +32,7 @@ export async function signUpWithEmail(
       secure: true,
     });
 
-    redirect("/team");
+    redirect("/");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return {

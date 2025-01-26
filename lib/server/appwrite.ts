@@ -1,5 +1,5 @@
 "use server";
-import { Client, Account } from "node-appwrite";
+import { Client, Account, Teams } from "node-appwrite";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE } from "./const";
 
@@ -18,6 +18,9 @@ export async function createSessionClient() {
   return {
     get account() {
       return new Account(client);
+    },
+    get teams() {
+      return new Teams(client);
     },
   };
 }
@@ -42,4 +45,9 @@ export async function getLoggedInUser() {
   } catch {
     return null;
   }
+}
+
+export async function getUserTeams() {
+  const { teams } = await createSessionClient();
+  return teams.list();
 }

@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 
 export default async function AuthPage() {
   const user = await getLoggedInUser();
-  if (user) redirect("/team");
+  if (user) redirect("/");
 
   return (
     <div className="container mx-auto p-4 max-w-md">

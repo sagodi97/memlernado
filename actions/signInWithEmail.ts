@@ -22,7 +22,7 @@ export async function signInWithEmail(
       sameSite: "strict",
       secure: true,
     });
-    redirect("/team");
+    redirect("/");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     return {
