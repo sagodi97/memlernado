@@ -3,11 +3,9 @@ import { redirect } from "next/navigation";
 import { createSessionClient } from "@/lib/server/appwrite";
 import { ID } from "node-appwrite";
 import { headers } from "next/headers";
+import { parseError } from "@/lib/utils";
 
-export async function createWorkspace(
-  _: { message: string },
-  formData: FormData
-) {
+export async function createWorkspace(formData: FormData) {
   const workspaceName = formData.get("workspaceName") as string;
   const teamEmails = formData.get("teamEmails") as string;
 
@@ -37,7 +35,7 @@ export async function createWorkspace(
   } catch (e: any) {
     console.error(e);
     return {
-      message: e?.response?.message ?? "Something went wrong",
+      error: parseError(e),
     };
   }
   redirect("/");

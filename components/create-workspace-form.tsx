@@ -6,20 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createWorkspace } from "@/actions";
-import { useFormState } from "react-dom";
+import { useFormStatus } from "react-dom";
+import { Loader2 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 export function CreateWorkspaceForm() {
-  const [formState, formAction] = useFormState(createWorkspace, {
-    message: "",
-  });
-
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>Create Your Workspace</CardTitle>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-6">
+        <form
+          action={async (formData) => {
+            const { error } = await createWorkspace(formData);
+            if (error) {
+              toast({});
+            }
+          }}
+          className="space-y-6"
+        >
           <div className="space-y-2">
             <Label htmlFor="workspaceName">Workspace Name</Label>
             <Input
@@ -38,16 +44,18 @@ export function CreateWorkspaceForm() {
               rows={4}
             />
           </div>
-          <Button type="submit" className="w-full">
-            Create Workspace
-          </Button>
-          {formState.message && (
-            <p className="text-red-500 text-sm text-center">
-              {formState.message}
-            </p>
-          )}
+          <Submit />
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+function Submit() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={pending} className="w-full">
+      Create Workspace {pending && <Loader2 className="ml-3 animate-spin" />}
+    </Button>
   );
 }

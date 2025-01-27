@@ -22,7 +22,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Models } from "node-appwrite";
 import { inviteMembers, removeMember } from "@/actions";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,8 +34,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2Icon } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Loader2, Trash2Icon } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 interface IAddTeamMembersProps {
   members: Models.Membership[];
@@ -48,17 +48,13 @@ export default function MembersSection({
   teamId,
   currentUserId,
 }: IAddTeamMembersProps) {
-  const { toast } = useToast();
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, formAction] = useFormState(inviteMembers, {
-    message: "",
-  });
 
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Members</h2>
+
         <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
           <DialogTrigger asChild>
             <Button>Invite New Member</Button>
@@ -68,8 +64,15 @@ export default function MembersSection({
               <DialogTitle>Invite New Member</DialogTitle>
             </DialogHeader>
             <form
-              action={formAction}
-              onSubmit={() => setIsInviteDialogOpen(false)}
+              action={async (formData) => {
+                const { error } = await inviteMembers(formData);
+                if (error) {
+                  toast({ title: error, variant: "destructive" });
+                } else {
+                  const email = formData.get("email");
+                  toast({ title: `${email} has been invited.` });
+                }
+              }}
               className="space-y-4"
             >
               <div>
@@ -83,7 +86,7 @@ export default function MembersSection({
                   required
                 />
               </div>
-              <Button type="submit">Send Invitation</Button>
+              <InviteButton onClose={() => setIsInviteDialogOpen(false)} />
             </form>
           </DialogContent>
         </Dialog>
@@ -136,6 +139,23 @@ export default function MembersSection({
   );
 }
 
+function InviteButton({ onClose }: { onClose: () => void }) {
+  const { pending } = useFormStatus();
+  const didCallActionRef = useRef(false);
+
+  useEffect(() => {
+    if (!pending && didCallActionRef.current) {
+      onClose();
+    }
+  }, [pending, onClose]);
+
+  return (
+    <Button onClick={() => (didCallActionRef.current = true)} type="submit">
+      Send Invitation {pending && <Loader2 className="ml-3 animate-spin" />}
+    </Button>
+  );
+}
+
 function RemoveButton({ onClose }: { onClose: () => void }) {
   const { pending } = useFormStatus();
   const didCallActionRef = useRef(false);
@@ -151,7 +171,7 @@ function RemoveButton({ onClose }: { onClose: () => void }) {
       type="submit"
       onClick={() => (didCallActionRef.current = true)}
     >
-      Remove
+      Remove {pending && <Loader2 className="ml-3 animate-spin" />}
     </AlertDialogAction>
   );
 }
@@ -193,7 +213,6 @@ function RemoveMemberForm({
               if (error) {
                 onError(error);
               } else {
-                console.log("YEAH");
                 onSuccess();
               }
             }}
