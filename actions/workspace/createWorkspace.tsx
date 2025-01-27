@@ -33,8 +33,6 @@ export async function createWorkspace(
         );
       }
     }
-
-    redirect("/");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     console.error(e);
@@ -42,4 +40,5 @@ export async function createWorkspace(
       message: e?.response?.message ?? "Something went wrong",
     };
   }
+  redirect("/");
 }

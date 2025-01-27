@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import {
   Table,
@@ -21,18 +21,34 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Models } from "node-appwrite";
-import { inviteMembers } from "@/actions";
-import { useFormState } from "react-dom";
+import { inviteMembers, removeMember } from "@/actions";
+import { useFormState, useFormStatus } from "react-dom";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2Icon } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface IAddTeamMembersProps {
   members: Models.Membership[];
   teamId: string;
+  currentUserId: string;
 }
 
 export default function MembersSection({
   members,
   teamId,
+  currentUserId,
 }: IAddTeamMembersProps) {
+  const { toast } = useToast();
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, formAction] = useFormState(inviteMembers, {
@@ -79,6 +95,7 @@ export default function MembersSection({
             <TableHead>Email</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Joined</TableHead>
+            <TableHead />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -92,10 +109,101 @@ export default function MembersSection({
                   ? dayjs(member.joined).format("DD/MM/YYYY")
                   : "-"}
               </TableCell>
+              <TableCell>
+                {member.userId !== currentUserId && (
+                  <RemoveMemberForm
+                    member={member}
+                    onSuccess={() => {
+                      toast({
+                        title: "Succesfully removed member",
+                      });
+                    }}
+                    onError={(err) => {
+                      toast({
+                        title: "Failed to remove user",
+                        description: err || "An unexpected error occured",
+                        variant: "destructive",
+                      });
+                    }}
+                  />
+                )}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </div>
+  );
+}
+
+function RemoveButton({ onClose }: { onClose: () => void }) {
+  const { pending } = useFormStatus();
+  const didCallActionRef = useRef(false);
+
+  useEffect(() => {
+    if (!pending && didCallActionRef.current) {
+      onClose();
+    }
+  }, [pending, onClose]);
+
+  return (
+    <AlertDialogAction
+      type="submit"
+      onClick={() => (didCallActionRef.current = true)}
+    >
+      Remove
+    </AlertDialogAction>
+  );
+}
+
+function RemoveMemberForm({
+  member,
+  onError,
+  onSuccess,
+}: {
+  member: Models.Membership;
+  onError: (msg: string) => void;
+  onSuccess: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Trash2Icon
+          cursor={"pointer"}
+          size={24}
+          onClick={() => setOpen(true)}
+        />
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Remove team member</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to remove {member.userEmail} from the team?
+            This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <form
+            action={async (formData) => {
+              console.log("Sent form");
+              const { error } = await removeMember(formData);
+              if (error) {
+                onError(error);
+              } else {
+                console.log("YEAH");
+                onSuccess();
+              }
+            }}
+          >
+            <input type="hidden" name="teamId" value={member.teamId} />
+            <input type="hidden" name="membershipId" value={member.$id} />
+            <RemoveButton onClose={() => setOpen(false)} />
+          </form>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
