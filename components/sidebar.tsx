@@ -1,3 +1,4 @@
+"use client";
 import { Navigation } from "./navigation";
 import Image from "next/image";
 import {
@@ -7,7 +8,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { MenuIcon } from "lucide-react";
-import { workspaceService } from "@/lib/server/services/appwrite";
+import { EWorkspaceRole } from "@/lib/types";
+import { useState } from "react";
+
+interface ISidebarProps {
+  roles: EWorkspaceRole[];
+}
 
 const Header = () => (
   <div className="flex flex-col justify-center lg:justify-start lg:flex-row gap-2 lg:gap-1 items-center mb-10">
@@ -16,13 +22,7 @@ const Header = () => (
   </div>
 );
 
-export const Sidebar = async () => {
-  const workspaces = await workspaceService.getUserWorkspaces();
-  if (!workspaces?.total) return null;
-  const roles = await workspaceService.getCurrentUserRoles(
-    workspaces.teams[0].$id
-  );
-
+export const Sidebar = ({ roles }: ISidebarProps) => {
   return (
     <aside className="h-screen p-4 bg-slate-100 w-64 min-w-64 hidden lg:block">
       <Header />
@@ -31,16 +31,12 @@ export const Sidebar = async () => {
   );
 };
 
-export const MobileSideBar = async () => {
-  const workspaces = await workspaceService.getUserWorkspaces();
-  if (!workspaces?.total) return null;
-  const roles = await workspaceService.getCurrentUserRoles(
-    workspaces.teams[0].$id
-  );
+export const MobileSideBar = ({ roles }: ISidebarProps) => {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="block lg:hidden">
-      <Sheet>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger className="px-4 h-16 ">
           <MenuIcon size={25} />
         </SheetTrigger>
@@ -48,7 +44,10 @@ export const MobileSideBar = async () => {
           <SheetHeader>
             <Header />
           </SheetHeader>
-          <Navigation roles={roles || []} />
+          <Navigation
+            roles={roles || []}
+            onLinkClick={() => setIsOpen(false)}
+          />
         </SheetContent>
       </Sheet>
     </div>

@@ -49,9 +49,10 @@ const links = [
 
 interface INavigationProps {
   roles: EWorkspaceRole[];
+  onLinkClick?: () => void;
 }
 
-export function Navigation({ roles }: INavigationProps) {
+export function Navigation({ roles, onLinkClick }: INavigationProps) {
   const pathname = usePathname();
 
   const filteredLinks = links.filter((link) =>
@@ -70,6 +71,7 @@ export function Navigation({ roles }: INavigationProps) {
               ? "text-primary bg-white"
               : "text-muted-foreground"
           )}
+          onClick={onLinkClick}
         >
           <Icon size={18} />
           {label}
