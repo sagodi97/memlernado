@@ -21,7 +21,9 @@ export function CreateWorkspaceForm() {
           action={async (formData) => {
             const { error } = await createWorkspace(formData);
             if (error) {
-              toast({});
+              toast({
+                title: error,
+              });
             }
           }}
           className="space-y-6"

@@ -1,4 +1,4 @@
-export enum ETeamRole {
+export enum EWorkspaceRole {
   OWNER = "owner",
   STUDENT = "student",
 }

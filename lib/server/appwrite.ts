@@ -2,7 +2,7 @@
 import { Client, Account, Teams, Users } from "node-appwrite";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE } from "./const";
-import { ETeamRole } from "../types";
+import { EWorkspaceRole } from "../types";
 
 export async function createEmptySessionClient() {
   const client = new Client()
@@ -70,7 +70,7 @@ export async function getLoggedInUser() {
   }
 }
 
-export async function getUserTeams() {
+export async function getUserWorkspaces() {
   try {
     const { teams } = await createSessionClient();
     return teams.list();
@@ -79,7 +79,7 @@ export async function getUserTeams() {
   }
 }
 
-export async function getTeamMembers(teamId: string) {
+export async function getWorkspaceMembers(teamId: string) {
   try {
     const { teams } = await createSessionClient();
     return teams.listMemberships(teamId);
@@ -88,16 +88,16 @@ export async function getTeamMembers(teamId: string) {
   }
 }
 
-export async function getCurrentUserTeamRoles(
+export async function getCurrentUserWorkspaceRoles(
   teamId: string
-): Promise<ETeamRole[] | null> {
+): Promise<EWorkspaceRole[] | null> {
   try {
     const { teams, account } = await createSessionClient();
     const { $id: userId } = await account.get();
     const { memberships } = await teams.listMemberships(teamId);
     return (
-      (memberships.find((m) => m.userId === userId)?.roles as ETeamRole[]) ||
-      null
+      (memberships.find((m) => m.userId === userId)
+        ?.roles as EWorkspaceRole[]) || null
     );
   } catch {
     return null;

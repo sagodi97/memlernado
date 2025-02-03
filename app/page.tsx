@@ -1,4 +1,4 @@
-import { getLoggedInUser, getUserTeams } from "@/lib/server/appwrite";
+import { getLoggedInUser, getUserWorkspaces } from "@/lib/server/appwrite";
 
 import { redirect } from "next/navigation";
 
@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 export default async function Home() {
   const user = await getLoggedInUser();
   if (!user) redirect("/landing");
-  const userTeams = await getUserTeams();
+  const userTeams = await getUserWorkspaces();
   if (!userTeams?.total) redirect("/onboarding");
   redirect("/workspace");
 }

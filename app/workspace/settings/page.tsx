@@ -1,7 +1,7 @@
 import {
   getLoggedInUser,
-  getTeamMembers,
-  getUserTeams,
+  getWorkspaceMembers,
+  getUserWorkspaces,
 } from "@/lib/server/appwrite";
 import GeneralSection from "./components/GeneralSection";
 import MembersSection from "./components/MembersSection";
@@ -9,10 +9,10 @@ import { TabsContent } from "@/components/ui/tabs";
 
 export default async function TeamSettingsPage() {
   const user = await getLoggedInUser();
-  const teams = await getUserTeams();
+  const teams = await getUserWorkspaces();
   const teamId = teams?.teams?.[0].$id;
   if (!teamId || !user) return null;
-  const memberships = await getTeamMembers(teamId);
+  const memberships = await getWorkspaceMembers(teamId);
   if (!memberships) return null;
 
   return (

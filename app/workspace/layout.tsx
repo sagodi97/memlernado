@@ -1,6 +1,6 @@
 import { MobileSideBar, Sidebar } from "@/components/sidebar";
 import { UserMenuButton } from "@/components/user-menu-button";
-import { getLoggedInUser, getUserTeams } from "@/lib/server/appwrite";
+import { getLoggedInUser, getUserWorkspaces } from "@/lib/server/appwrite";
 
 import { redirect } from "next/navigation";
 
@@ -11,7 +11,7 @@ export default async function RootLayout({
 }) {
   const user = await getLoggedInUser();
   if (!user) redirect("/landing");
-  const userTeams = await getUserTeams();
+  const userTeams = await getUserWorkspaces();
   if (!userTeams?.total) redirect("/onboarding");
 
   return (

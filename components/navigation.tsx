@@ -10,7 +10,7 @@ import {
   SettingsIcon,
   SquareKanbanIcon,
 } from "lucide-react";
-import { ETeamRole } from "@/lib/types";
+import { EWorkspaceRole } from "@/lib/types";
 
 const APP_ROOT = "/workspace";
 
@@ -19,36 +19,36 @@ const links = [
     href: APP_ROOT,
     label: "Your Work",
     icon: InboxIcon,
-    allowedRoles: [ETeamRole.OWNER, ETeamRole.STUDENT],
+    allowedRoles: [EWorkspaceRole.OWNER, EWorkspaceRole.STUDENT],
   },
   {
     href: APP_ROOT + "/backlog",
     label: "Backlog",
     icon: LogsIcon,
-    allowedRoles: [ETeamRole.OWNER, ETeamRole.STUDENT],
+    allowedRoles: [EWorkspaceRole.OWNER, EWorkspaceRole.STUDENT],
   },
   {
     href: APP_ROOT + "/board",
     label: "Board",
     icon: SquareKanbanIcon,
-    allowedRoles: [ETeamRole.OWNER, ETeamRole.STUDENT],
+    allowedRoles: [EWorkspaceRole.OWNER, EWorkspaceRole.STUDENT],
   },
   {
     href: APP_ROOT + "/reports",
     label: "Reports",
     icon: ChartAreaIcon,
-    allowedRoles: [ETeamRole.OWNER, ETeamRole.STUDENT],
+    allowedRoles: [EWorkspaceRole.OWNER, EWorkspaceRole.STUDENT],
   },
   {
     href: APP_ROOT + "/settings",
     label: "Settings",
     icon: SettingsIcon,
-    allowedRoles: [ETeamRole.OWNER],
+    allowedRoles: [EWorkspaceRole.OWNER],
   },
 ];
 
 interface INavigationProps {
-  roles: ETeamRole[];
+  roles: EWorkspaceRole[];
 }
 
 export function Navigation({ roles }: INavigationProps) {

@@ -1,7 +1,7 @@
-import { getUserTeams } from "@/lib/server/appwrite";
+import { getUserWorkspaces } from "@/lib/server/appwrite";
 
 export default async function TeamHomepage() {
-  const teams = await getUserTeams();
+  const teams = await getUserWorkspaces();
 
   return (
     <div className="container mx-auto p-6">

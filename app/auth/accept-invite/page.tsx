@@ -1,4 +1,4 @@
-import { getUserTeams } from "@/lib/server/appwrite";
+import { getUserWorkspaces } from "@/lib/server/appwrite";
 import { redirect } from "next/navigation";
 import { AcceptInviteForm } from "./components/accept-invite-form";
 import {
@@ -21,7 +21,7 @@ export default async function AcceptInvite({
 }: {
   searchParams: IAcceptInviteSearchParams;
 }) {
-  const teams = await getUserTeams();
+  const teams = await getUserWorkspaces();
   if (teams?.total) redirect("/workspace");
   const { membershipId, userId, secret, teamId } = searchParams;
 
