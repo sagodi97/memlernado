@@ -5,12 +5,12 @@ import {
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { getLoggedInUser } from "@/lib/server/appwrite";
 import { cn } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 import { signOut } from "@/actions";
 import { LogOut } from "lucide-react";
 import { Button } from "./ui/button";
+import { authService } from "@/lib/server/services/appwrite";
 
 interface IUserAvatarProps {
   fallbackText: string;
@@ -30,7 +30,7 @@ const UserAvatar = ({ fallbackText, className }: IUserAvatarProps) => (
 );
 
 export const UserMenuButton = async () => {
-  const user = await getLoggedInUser();
+  const user = await authService.getCurrentUser();
   if (!user) return null;
 
   const { name, email } = user;

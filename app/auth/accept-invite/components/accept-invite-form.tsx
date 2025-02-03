@@ -1,15 +1,16 @@
 "use client";
-import { acceptMembership } from "@/actions";
+import { acceptInvite } from "@/actions";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
+import { toast } from "@/hooks/use-toast";
 import { Loader2Icon } from "lucide-react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 
 interface IAcceptInviteForm {
   membershipId: string;
   userId: string;
   secret: string;
-  teamId: string;
+  workspaceId: string;
 }
 
 const Submit = () => {
@@ -25,20 +26,23 @@ const Submit = () => {
 export function AcceptInviteForm({
   membershipId,
   secret,
-  teamId,
+  workspaceId,
   userId,
 }: IAcceptInviteForm) {
-  const [formState, formAction] = useFormState(acceptMembership, {
-    message: "",
-  });
-
   return (
     <div className="flex flex-col gap-2">
-      <form action={formAction}>
+      <form
+        action={async (formData) => {
+          const { error } = await acceptInvite(formData);
+          if (error) {
+            toast({ title: error, variant: "destructive" });
+          }
+        }}
+      >
         <input type="hidden" name="userId" value={userId} />
         <input type="hidden" name="membershipId" value={membershipId} />
         <input type="hidden" name="secret" value={secret} />
-        <input type="hidden" name="teamId" value={teamId} />
+        <input type="hidden" name="workspaceId" value={workspaceId} />
 
         <div className="flex flex-col gap-4">
           <div>
@@ -54,11 +58,6 @@ export function AcceptInviteForm({
           </div>
           <Submit />
         </div>
-        {formState.message && (
-          <p className="text-red-500 text-sm text-center">
-            {formState.message}
-          </p>
-        )}
       </form>
     </div>
   );

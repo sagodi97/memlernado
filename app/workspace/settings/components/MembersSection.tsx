@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Models } from "node-appwrite";
-import { inviteMembers, removeMember } from "@/actions";
+import { inviteMember, removeMember } from "@/actions";
 import { useFormStatus } from "react-dom";
 import {
   AlertDialog,
@@ -39,13 +39,13 @@ import { toast } from "@/hooks/use-toast";
 
 interface IAddTeamMembersProps {
   members: Models.Membership[];
-  teamId: string;
+  workspaceId: string;
   currentUserId: string;
 }
 
 export default function MembersSection({
   members,
-  teamId,
+  workspaceId,
   currentUserId,
 }: IAddTeamMembersProps) {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
@@ -65,7 +65,7 @@ export default function MembersSection({
             </DialogHeader>
             <form
               action={async (formData) => {
-                const { error } = await inviteMembers(formData);
+                const { error } = await inviteMember(formData);
                 if (error) {
                   toast({ title: error, variant: "destructive" });
                 } else {
@@ -77,7 +77,7 @@ export default function MembersSection({
             >
               <div>
                 <Label htmlFor="email">Email Address</Label>
-                <input type="hidden" name="teamId" value={teamId} />
+                <input type="hidden" name="workspaceId" value={workspaceId} />
                 <Input
                   id="email"
                   name="email"
@@ -217,7 +217,7 @@ function RemoveMemberForm({
               }
             }}
           >
-            <input type="hidden" name="teamId" value={member.teamId} />
+            <input type="hidden" name="workspaceId" value={member.teamId} />
             <input type="hidden" name="membershipId" value={member.$id} />
             <RemoveButton onClose={() => setOpen(false)} />
           </form>

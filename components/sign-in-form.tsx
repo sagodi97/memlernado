@@ -1,16 +1,21 @@
 "use client";
-import { signInWithEmail } from "@/actions";
+import { signIn } from "@/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useFormState } from "react-dom";
+import { toast } from "@/hooks/use-toast";
 
 export function SignInForm() {
-  const [formState, formAction] = useFormState(signInWithEmail, {
-    message: "",
-  });
   return (
-    <form action={formAction} onError={() => {}} className="space-y-4">
+    <form
+      action={async (formData) => {
+        const { error } = await signIn(formData);
+        if (error) {
+          toast({ title: error, variant: "destructive" });
+        }
+      }}
+      className="space-y-4"
+    >
       <div>
         <Label htmlFor="email">Email</Label>
         <Input name="email" id="email" type="email" required />
@@ -22,9 +27,6 @@ export function SignInForm() {
       <Button type="submit" className="w-full">
         Sign In
       </Button>
-      {formState.message && (
-        <p className="text-red-500 text-sm text-center">{formState.message}</p>
-      )}
     </form>
   );
 }

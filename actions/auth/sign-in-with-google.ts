@@ -1,22 +1,17 @@
 "use server";
 
-import { createAdminClient } from "./appwrite";
+import { oAuthService } from "@/lib/server/services/appwrite";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { OAuthProvider } from "node-appwrite";
 
 export async function signInWithGoogle() {
-  const { account } = await createAdminClient();
-
   const origin = headers().get("origin");
   const successUrl = `${origin}/oauth`;
   const failureUrl = `${origin}/auth`;
 
-  const redirectUrl = await account.createOAuth2Token(
-    OAuthProvider.Google,
+  const redirectUrl = await oAuthService.createGoogleAuthUrl(
     successUrl,
     failureUrl
   );
-
   redirect(redirectUrl);
 }

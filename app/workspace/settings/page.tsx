@@ -1,29 +1,25 @@
-import {
-  getLoggedInUser,
-  getWorkspaceMembers,
-  getUserWorkspaces,
-} from "@/lib/server/appwrite";
 import GeneralSection from "./components/GeneralSection";
 import MembersSection from "./components/MembersSection";
 import { TabsContent } from "@/components/ui/tabs";
+import { authService, workspaceService } from "@/lib/server/services/appwrite";
 
 export default async function TeamSettingsPage() {
-  const user = await getLoggedInUser();
-  const teams = await getUserWorkspaces();
-  const teamId = teams?.teams?.[0].$id;
-  if (!teamId || !user) return null;
-  const memberships = await getWorkspaceMembers(teamId);
+  const user = await authService.getCurrentUser();
+  const workspaces = await workspaceService.getUserWorkspaces();
+  const workspaceId = workspaces?.teams?.[0].$id;
+  if (!workspaceId || !user) return null;
+  const memberships = await workspaceService.getWorkspaceMembers(workspaceId);
   if (!memberships) return null;
 
   return (
     <div>
       <TabsContent value="general">
-        <GeneralSection team={teams.teams[0]} />
+        <GeneralSection team={workspaces.teams[0]} />
       </TabsContent>
       <TabsContent value="members">
         <MembersSection
           members={memberships.memberships}
-          teamId={teams.teams[0].$id}
+          workspaceId={workspaces.teams[0].$id}
           currentUserId={user.$id}
         />
       </TabsContent>

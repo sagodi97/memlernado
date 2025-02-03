@@ -1,4 +1,3 @@
-import { getUserWorkspaces } from "@/lib/server/appwrite";
 import { redirect } from "next/navigation";
 import { AcceptInviteForm } from "./components/accept-invite-form";
 import {
@@ -8,12 +7,12 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-
+import { workspaceService } from "@/lib/server/services/appwrite";
 interface IAcceptInviteSearchParams {
   membershipId?: string;
   userId?: string;
   secret?: string;
-  teamId?: string;
+  workspaceId?: string;
 }
 
 export default async function AcceptInvite({
@@ -21,11 +20,11 @@ export default async function AcceptInvite({
 }: {
   searchParams: IAcceptInviteSearchParams;
 }) {
-  const teams = await getUserWorkspaces();
-  if (teams?.total) redirect("/workspace");
-  const { membershipId, userId, secret, teamId } = searchParams;
+  const workspaces = await workspaceService.getUserWorkspaces();
+  if (workspaces?.total) redirect("/workspace");
+  const { membershipId, userId, secret, workspaceId } = searchParams;
 
-  if (!membershipId || !userId || !secret || !teamId)
+  if (!membershipId || !userId || !secret || !workspaceId)
     return (
       <div className="w-full h-full flex justify-center items-center">
         There was an error accepting your invitation
@@ -48,7 +47,7 @@ export default async function AcceptInvite({
             membershipId={membershipId}
             userId={userId}
             secret={secret}
-            teamId={teamId}
+            workspaceId={workspaceId}
           />
         </CardContent>
       </Card>

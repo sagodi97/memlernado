@@ -3,12 +3,12 @@ import { SignInForm } from "@/components/sign-in-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { signInWithGoogle } from "@/lib/server/oauth";
-import { getLoggedInUser } from "@/lib/server/appwrite";
 import { redirect } from "next/navigation";
+import { signInWithGoogle } from "@/actions/auth/sign-in-with-google";
+import { authService } from "@/lib/server/services/appwrite";
 
 export default async function AuthPage() {
-  const user = await getLoggedInUser();
+  const user = await authService.getCurrentUser();
   if (user) redirect("/");
 
   return (

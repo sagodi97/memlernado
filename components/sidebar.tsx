@@ -7,10 +7,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { MenuIcon } from "lucide-react";
-import {
-  getCurrentUserWorkspaceRoles,
-  getUserWorkspaces,
-} from "@/lib/server/appwrite";
+import { workspaceService } from "@/lib/server/services/appwrite";
 
 const Header = () => (
   <div className="flex flex-col justify-center lg:justify-start lg:flex-row gap-2 lg:gap-1 items-center mb-10">
@@ -20,9 +17,11 @@ const Header = () => (
 );
 
 export const Sidebar = async () => {
-  const teams = await getUserWorkspaces();
-  if (!teams?.total) return null;
-  const roles = await getCurrentUserWorkspaceRoles(teams.teams[0].$id);
+  const workspaces = await workspaceService.getUserWorkspaces();
+  if (!workspaces?.total) return null;
+  const roles = await workspaceService.getCurrentUserRoles(
+    workspaces.teams[0].$id
+  );
 
   return (
     <aside className="h-screen p-4 bg-slate-100 w-64 min-w-64 hidden lg:block">
@@ -33,9 +32,11 @@ export const Sidebar = async () => {
 };
 
 export const MobileSideBar = async () => {
-  const teams = await getUserWorkspaces();
-  if (!teams?.total) return null;
-  const roles = await getCurrentUserWorkspaceRoles(teams.teams[0].$id);
+  const workspaces = await workspaceService.getUserWorkspaces();
+  if (!workspaces?.total) return null;
+  const roles = await workspaceService.getCurrentUserRoles(
+    workspaces.teams[0].$id
+  );
 
   return (
     <div className="block lg:hidden">
