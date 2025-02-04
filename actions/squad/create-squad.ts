@@ -5,22 +5,33 @@ import { handleAction } from "../utils";
 import { createSquadSchema } from "./schemas";
 import { ActionResult } from "../types";
 import { EWorkspaceRole } from "@/lib/types";
+import { revalidatePath } from "next/cache";
 
-export async function createSquad(formData: FormData): Promise<ActionResult> {
+export async function createSquad(
+  formData: FormData
+): Promise<ActionResult<string>> {
   return handleAction({
     schema: createSquadSchema,
     formData,
     action: async (data) => {
-      // Check if user has owner role
-      const roles = await workspaceService.getCurrentUserRoles(
-        data.workspaceId
-      );
+      const workspaces = await workspaceService.getUserWorkspaces();
+      if (!workspaces?.teams.length) {
+        throw new Error("No workspace found");
+      }
+      const workspaceId = workspaces.teams[0].$id;
 
+      const roles = await workspaceService.getCurrentUserRoles(workspaceId);
       if (!roles?.includes(EWorkspaceRole.OWNER)) {
         throw new Error("Only workspace owners can create squads");
       }
 
-      await squadService.createSquad(data.workspaceId, data.name, data.avatar);
+      const newSquad = await squadService.createSquad(
+        workspaceId,
+        data.name,
+        data.avatar
+      );
+      revalidatePath("/workspace");
+      return newSquad.$id;
     },
   });
 }

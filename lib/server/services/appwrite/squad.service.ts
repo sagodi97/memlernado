@@ -29,16 +29,37 @@ export class SquadService implements ISquadService {
   }
 
   async getSquads(workspaceId: string) {
-    const databases = this.createDatabasesClient();
+    try {
+      const databases = this.createDatabasesClient();
 
-    return databases.listDocuments(
-      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-      process.env.NEXT_PUBLIC_APPWRITE_SQUADS_COLLECTION_ID!,
-      [
-        // Query to filter squads by workspaceId
-        Query.equal("workspaceId", workspaceId),
-      ]
-    );
+      const results = await databases.listDocuments(
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+        process.env.NEXT_PUBLIC_APPWRITE_SQUADS_COLLECTION_ID!,
+        [
+          // Query to filter squads by workspaceId
+          Query.equal("workspaceId", workspaceId),
+        ]
+      );
+      return results;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  async getSquad(squadId: string) {
+    try {
+      const databases = this.createDatabasesClient();
+
+      return await databases.getDocument(
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+        process.env.NEXT_PUBLIC_APPWRITE_SQUADS_COLLECTION_ID!,
+        squadId
+      );
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 
   async deleteSquad(squadId: string) {

@@ -10,9 +10,12 @@ import {
 import { MenuIcon } from "lucide-react";
 import { EWorkspaceRole } from "@/lib/types";
 import { useState } from "react";
+import { Models } from "node-appwrite";
 
 interface ISidebarProps {
   roles: EWorkspaceRole[];
+  squads: Models.Document[];
+  memberships: Models.Document[];
 }
 
 const Header = () => (
@@ -22,16 +25,20 @@ const Header = () => (
   </div>
 );
 
-export const Sidebar = ({ roles }: ISidebarProps) => {
+export const Sidebar = ({ roles, squads, memberships }: ISidebarProps) => {
   return (
     <aside className="h-screen p-4 bg-slate-100 w-64 min-w-64 hidden lg:block">
       <Header />
-      <Navigation roles={roles || []} />
+      <Navigation roles={roles} squads={squads} memberships={memberships} />
     </aside>
   );
 };
 
-export const MobileSideBar = ({ roles }: ISidebarProps) => {
+export const MobileSideBar = ({
+  roles,
+  squads,
+  memberships,
+}: ISidebarProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -46,6 +53,8 @@ export const MobileSideBar = ({ roles }: ISidebarProps) => {
           </SheetHeader>
           <Navigation
             roles={roles || []}
+            squads={squads || []}
+            memberships={memberships || []}
             onLinkClick={() => setIsOpen(false)}
           />
         </SheetContent>

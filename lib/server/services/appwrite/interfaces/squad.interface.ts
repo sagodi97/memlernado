@@ -6,7 +6,10 @@ export interface ISquadService {
     name: string,
     avatar?: string
   ): Promise<Models.Document>;
-  getSquads(workspaceId: string): Promise<Models.DocumentList<Models.Document>>;
+  getSquads(
+    workspaceId: string
+  ): Promise<Models.DocumentList<Models.Document> | null>;
+  getSquad(squadId: string): Promise<Models.Document | null>;
   deleteSquad(squadId: string): Promise<void>;
   // We can add more methods later as needed
 }
