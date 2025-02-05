@@ -16,10 +16,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CreateSquadForm } from "@/components/create-squad-form";
-import { Models } from "node-appwrite";
-import { CheckIcon, PlusIcon } from "lucide-react";
+import type { Models } from "node-appwrite";
+import { CheckIcon, PlusIcon, ChevronDownIcon } from "lucide-react";
 import { EWorkspaceRole } from "@/lib/types";
 import Link from "next/link";
+import Image from "next/image";
+import { PlaceholderAvatar } from "@/components/ui/placeholder-avatar";
 
 interface SquadSelectorProps {
   roles: EWorkspaceRole[];
@@ -39,21 +41,31 @@ export function SquadSelector({
     setShowCreateModal(false);
   };
 
-  if (squads.length === 0) {
-    // TODO: implement empty state
-    return <></>;
-  }
+  const currentSquadData = squads.find((s) => s.$id === currentSquad);
 
   return (
     <div className="space-y-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="w-full justify-between">
-            <span className="truncate">
-              {currentSquad
-                ? squads.find((s) => s.$id === currentSquad)?.name
-                : "Select Squad"}
-            </span>
+          <Button variant="outline" className="w-full justify-between">
+            <div className="flex items-center space-x-2">
+              {currentSquadData &&
+                (currentSquadData.avatar ? (
+                  <Image
+                    src={currentSquadData.avatar || "/placeholder.svg"}
+                    alt={currentSquadData.name}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <PlaceholderAvatar name={currentSquadData.name} size={24} />
+                ))}
+              <span className="truncate">
+                {currentSquadData ? currentSquadData.name : "Select Squad"}
+              </span>
+            </div>
+            <ChevronDownIcon className="h-4 w-4 opacity-50" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-64">
@@ -61,11 +73,22 @@ export function SquadSelector({
             <DropdownMenuItem asChild key={squad.$id}>
               <Link
                 href={`/workspace/${squad.$id}`}
-                className="flex justify-between items-center px-4 py-2 hover:bg-accent"
+                className="flex items-center space-x-2 px-2 py-2 hover:bg-accent hover:text-accent-foreground"
               >
-                <span className="truncate">{squad.name}</span>
+                {squad.avatar ? (
+                  <Image
+                    src={squad.avatar || "/placeholder.svg"}
+                    alt={squad.name}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <PlaceholderAvatar name={squad.name} size={24} />
+                )}
+                <span className="flex-grow truncate">{squad.name}</span>
                 {memberships.some((m) => m.squadId === squad.$id) && (
-                  <CheckIcon className="h-4 w-4 text-green-500 ml-2" />
+                  <CheckIcon className="h-4 w-4 text-primary" />
                 )}
               </Link>
             </DropdownMenuItem>
@@ -75,9 +98,9 @@ export function SquadSelector({
               className="cursor-pointer"
               onSelect={() => setShowCreateModal(true)}
             >
-              <div className="flex items-center gap-2 text-primary">
+              <div className="flex items-center space-x-2 text-primary">
                 <PlusIcon className="h-4 w-4" />
-                Create New Squad
+                <span>Create New Squad</span>
               </div>
             </DropdownMenuItem>
           )}
