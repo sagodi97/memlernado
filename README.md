@@ -166,14 +166,15 @@ memlernado/
   - Mock Appwrite APIs in development
 
 ### Appwrite Integration
+## Server SDK
 ```mermaid
 graph LR
-    A[Next.js Frontend] --> B[Appwrite SDK]
-    B --> C[Authentication]
-    B --> D[Teams Service]
-    B --> E[Databases]
-    E --> F[Workspaces]
-    E --> G[Squads]
-    E --> H[Learning Tasks]
+    A[Appwrite Server SDK]
+    A --> B[Authentication]
+    A --> C[Teams Service]
+    A --> D[Databases]
+    D --> E[Workspaces]
+    D --> F[Squads]
+    D --> G[Learning Tasks]
 ```
 
