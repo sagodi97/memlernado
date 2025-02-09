@@ -27,7 +27,7 @@ const Header = () => (
 
 export const Sidebar = ({ roles, squads, memberships }: ISidebarProps) => {
   return (
-    <aside className="h-screen p-4 bg-slate-100 w-64 min-w-64 hidden lg:block">
+    <aside className="h-screen p-4 border-r border-slate-200 border-dashed w-64 min-w-64 hidden lg:block">
       <Header />
       <Navigation roles={roles} squads={squads} memberships={memberships} />
     </aside>
