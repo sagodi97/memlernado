@@ -37,17 +37,19 @@ function CreateButton({ onClose }: { onClose: () => void }) {
 
 interface CreateSquadFormProps {
   workspaceId: string;
+  trigger: React.ReactNode;
 }
 
-export function CreateSquadForm({ workspaceId }: CreateSquadFormProps) {
+export function CreateSquadForm({
+  workspaceId,
+  trigger,
+}: CreateSquadFormProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>Create New Squad</Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Squad</DialogTitle>

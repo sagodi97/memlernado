@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useCurrentSquad } from "@/hooks/use-current-squad";
 import {
   DropdownMenu,
@@ -9,13 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { CreateSquadForm } from "@/components/create-squad-form";
+
 import type { Models } from "node-appwrite";
 import { CheckIcon, PlusIcon, ChevronDownIcon } from "lucide-react";
 import { EWorkspaceRole } from "@/lib/types";
@@ -27,19 +20,16 @@ interface SquadSelectorProps {
   roles: EWorkspaceRole[];
   squads: Models.Document[];
   memberships: Models.Document[];
+  onLinkClick?: () => void;
 }
 
 export function SquadSelector({
   roles,
   squads,
   memberships,
+  onLinkClick,
 }: SquadSelectorProps) {
   const currentSquad = useCurrentSquad();
-  const [showCreateModal, setShowCreateModal] = useState(false);
-
-  const handleSuccess = () => {
-    setShowCreateModal(false);
-  };
 
   const currentSquadData = squads.find((s) => s.$id === currentSquad);
 
@@ -74,6 +64,7 @@ export function SquadSelector({
               <Link
                 href={`/workspace/${squad.$id}`}
                 className="flex items-center space-x-2 px-2 py-2 hover:bg-accent hover:text-accent-foreground"
+                onClick={onLinkClick}
               >
                 {squad.avatar ? (
                   <Image
@@ -94,27 +85,17 @@ export function SquadSelector({
             </DropdownMenuItem>
           ))}
           {roles.includes(EWorkspaceRole.OWNER) && (
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onSelect={() => setShowCreateModal(true)}
-            >
-              <div className="flex items-center space-x-2 text-primary">
-                <PlusIcon className="h-4 w-4" />
-                <span>Create New Squad</span>
-              </div>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <Link href="/workspace/settings/squads" onClick={onLinkClick}>
+                <div className="flex items-center space-x-2 text-primary">
+                  <PlusIcon className="h-4 w-4" />
+                  <span>Create New Squad</span>
+                </div>
+              </Link>
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create New Squad</DialogTitle>
-          </DialogHeader>
-          <CreateSquadForm onSuccess={handleSuccess} />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

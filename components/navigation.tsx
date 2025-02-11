@@ -88,6 +88,7 @@ export function Navigation({
                 roles={roles}
                 squads={squads}
                 memberships={memberships}
+                onLinkClick={onLinkClick}
               />
               {currentSquad &&
                 link.children?.map((child) => (

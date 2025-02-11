@@ -38,7 +38,10 @@ export default function SquadsSection({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Squads</h2>
-        <CreateSquadForm workspaceId={workspaceId} />
+        <CreateSquadForm
+          workspaceId={workspaceId}
+          trigger={<Button>Create New Squad</Button>}
+        />
       </div>
 
       <div className="rounded-md border">
