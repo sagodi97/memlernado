@@ -1,58 +1,96 @@
 "use client";
 
-import { createSquad } from "@/actions/squad";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { Loader2Icon } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useFormStatus } from "react-dom";
+import { Loader2 } from "lucide-react";
+import { createSquad } from "@/actions/squad";
+import { useToast } from "@/hooks/use-toast";
 
-export function CreateSquadForm({ onSuccess }: { onSuccess: () => void }) {
-  const { toast } = useToast();
+function CreateButton({ onClose }: { onClose: () => void }) {
+  const { pending } = useFormStatus();
+  const didCallActionRef = useRef(false);
+
+  useEffect(() => {
+    if (!pending && didCallActionRef.current) {
+      onClose();
+    }
+  }, [pending, onClose]);
 
   return (
-    <form
-      action={async (formData) => {
-        const { error } = await createSquad(formData);
-        if (error) {
-          toast({
-            title: "Creation failed",
-            description: error,
-          });
-        } else {
-          toast({
-            title: "Squad created!",
-            description: `Your new squad ${formData.get("name")} is ready.`,
-          });
-          onSuccess?.();
-        }
-      }}
-      className="space-y-4"
-    >
-      <div className="space-y-2">
-        <Label htmlFor="name">Squad Name</Label>
-        <Input id="name" name="name" placeholder="Awesome Team" required />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="avatar">Avatar URL (optional)</Label>
-        <Input
-          id="avatar"
-          name="avatar"
-          placeholder="https://example.com/avatar.png"
-        />
-      </div>
-      <CreateSquadButton />
-    </form>
+    <Button onClick={() => (didCallActionRef.current = true)} type="submit">
+      Create Squad {pending && <Loader2 className="ml-3 animate-spin" />}
+    </Button>
   );
 }
 
-function CreateSquadButton() {
-  const { pending } = useFormStatus();
+interface CreateSquadFormProps {
+  workspaceId: string;
+}
+
+export function CreateSquadForm({ workspaceId }: CreateSquadFormProps) {
+  const { toast } = useToast();
+  const [open, setOpen] = useState(false);
+
   return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      Create Squad{" "}
-      {pending && <Loader2Icon className="ml-2 h-4 w-4 animate-spin" />}
-    </Button>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button>Create New Squad</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create Squad</DialogTitle>
+          <DialogDescription>
+            Create a new squad to organize your team members.
+          </DialogDescription>
+        </DialogHeader>
+        <form
+          action={async (formData) => {
+            formData.append("workspaceId", workspaceId);
+            const { error } = await createSquad(formData);
+            if (error) {
+              toast({
+                title: "Error",
+                description: error,
+                variant: "destructive",
+              });
+            } else {
+              toast({ title: "Squad created successfully" });
+              setOpen(false);
+            }
+          }}
+        >
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                name="name"
+                placeholder="Enter squad name"
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="avatar">Avatar</Label>
+              {/* <Input id="avatar" name="avatar" type="file" accept="image/*" /> */}
+            </div>
+          </div>
+          <DialogFooter>
+            <CreateButton onClose={() => setOpen(false)} />
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

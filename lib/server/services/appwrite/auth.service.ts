@@ -3,7 +3,7 @@ import { AppwriteClient } from "./client";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE } from "../../const";
 import { ID, Teams, Users, Account } from "node-appwrite";
-import { IAuthService } from "./interfaces/auth.interface";
+import { IAuthService, TUserPreferences } from "./interfaces/auth.interface";
 
 export class AuthService implements IAuthService {
   private createAccountClient(type: "session" | "admin" | "empty" = "session") {
@@ -20,7 +20,7 @@ export class AuthService implements IAuthService {
   async getCurrentUser() {
     try {
       const account = this.createAccountClient();
-      return await account.get();
+      return await account.get<TUserPreferences>();
     } catch {
       return null;
     }

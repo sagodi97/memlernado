@@ -1,7 +1,7 @@
 import "server-only";
 import { ID, Databases, Query } from "node-appwrite";
 import { AppwriteClient } from "./client";
-import { ISquadService } from "./interfaces/squad.interface";
+import { ISquadService, ISquad } from "./interfaces/squad.interface";
 
 export class SquadService implements ISquadService {
   private createDatabasesClient(type: "session" | "admin" = "session") {
@@ -16,7 +16,7 @@ export class SquadService implements ISquadService {
   async createSquad(workspaceId: string, name: string, avatar?: string) {
     const databases = this.createDatabasesClient();
 
-    return databases.createDocument(
+    return databases.createDocument<ISquad>(
       process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
       process.env.NEXT_PUBLIC_APPWRITE_SQUADS_COLLECTION_ID!,
       ID.unique(),
@@ -32,7 +32,7 @@ export class SquadService implements ISquadService {
     try {
       const databases = this.createDatabasesClient();
 
-      const results = await databases.listDocuments(
+      const results = await databases.listDocuments<ISquad>(
         process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
         process.env.NEXT_PUBLIC_APPWRITE_SQUADS_COLLECTION_ID!,
         [
@@ -51,7 +51,7 @@ export class SquadService implements ISquadService {
     try {
       const databases = this.createDatabasesClient();
 
-      return await databases.getDocument(
+      return await databases.getDocument<ISquad>(
         process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
         process.env.NEXT_PUBLIC_APPWRITE_SQUADS_COLLECTION_ID!,
         squadId

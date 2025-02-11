@@ -1,7 +1,11 @@
 import "server-only";
 import { ID, Databases, Query } from "node-appwrite";
 import { AppwriteClient } from "./client";
-import { ISquadMembershipService } from "./interfaces/squad-membership.interface";
+import {
+  ISquadMembership,
+  ISquadMembershipService,
+} from "./interfaces/squad-membership.interface";
+import { ESquadRole } from "@/lib/types";
 
 export class SquadMembershipService implements ISquadMembershipService {
   private createDatabasesClient(type: "session" | "admin" = "session") {
@@ -21,7 +25,7 @@ export class SquadMembershipService implements ISquadMembershipService {
   ) {
     const databases = this.createDatabasesClient();
 
-    return databases.createDocument(
+    return databases.createDocument<ISquadMembership>(
       process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
       process.env.NEXT_PUBLIC_APPWRITE_SQUADS_MEMBERSHIPS_COLLECTION_ID!,
       ID.unique(),
@@ -37,7 +41,7 @@ export class SquadMembershipService implements ISquadMembershipService {
   async getMemberships(squadId: string) {
     const databases = this.createDatabasesClient();
 
-    return databases.listDocuments(
+    return databases.listDocuments<ISquadMembership>(
       process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
       process.env.NEXT_PUBLIC_APPWRITE_SQUADS_MEMBERSHIPS_COLLECTION_ID!,
       [Query.equal("squadId", squadId)]
@@ -47,7 +51,7 @@ export class SquadMembershipService implements ISquadMembershipService {
   async getUserMemberships(userId: string, workspaceId: string) {
     const databases = this.createDatabasesClient();
 
-    return databases.listDocuments(
+    return databases.listDocuments<ISquadMembership>(
       process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
       process.env.NEXT_PUBLIC_APPWRITE_SQUADS_MEMBERSHIPS_COLLECTION_ID!,
       [Query.equal("userId", userId), Query.equal("workspaceId", workspaceId)]
@@ -64,10 +68,10 @@ export class SquadMembershipService implements ISquadMembershipService {
     );
   }
 
-  async updateRole(membershipId: string, role: string) {
+  async updateRole(membershipId: string, role: ESquadRole) {
     const databases = this.createDatabasesClient();
 
-    return databases.updateDocument(
+    return databases.updateDocument<ISquadMembership>(
       process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
       process.env.NEXT_PUBLIC_APPWRITE_SQUADS_MEMBERSHIPS_COLLECTION_ID!,
       membershipId,

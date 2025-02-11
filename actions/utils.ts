@@ -16,6 +16,7 @@ export async function handleAction<T, R = void>({
   const result = schema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!result.success) {
+    console.error(result.error);
     return {
       error: "Invalid form data",
     };
